@@ -7,7 +7,7 @@
     <div class="text-center mb-10 sm:mb-12">
         <p class="text-3xl mb-3" aria-hidden="true">🌳</p>
         <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
-            Silsilah Keluargaaa
+            Silsilah Keluarga
         </h1>
         <p class="mt-3 text-sm sm:text-base text-gray-600 leading-relaxed max-w-md mx-auto">
             Halaman ini untuk keluarga saja. Silakan buka silsilah atau masuk jika Anda yang mengurus data.
