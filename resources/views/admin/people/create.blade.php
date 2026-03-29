@@ -122,7 +122,7 @@
                                         <i class="fas fa-ring text-pink-600"></i>
                                         Pasangan (pernikahan)
                                     </h3>
-                                    <p class="text-xs text-gray-600 mt-1">Jika orang tua dikosongkan, pilih pasangan di cabang Anda (misalnya suami/istri dari luar garis keturunan).</p>
+                                    <p class="text-xs text-gray-600 mt-1">Jika orang tua dikosongkan, pilih pasangan di cabang Anda (misalnya suami/istri dari luar garis keturunan). <strong>Generasi</strong> anggota baru mengikuti generasi pasangan yang dipilih.</p>
                                 </div>
                                 <div>
                                     <label for="spouse_id" class="block text-sm font-semibold text-gray-800 mb-1.5">Pilih pasangan</label>

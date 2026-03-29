@@ -110,17 +110,29 @@ class PersonController extends Controller
 
         $validated = $request->validate($rules);
 
-        if (! $request->filled('parent_id')) {
-            $validated['parent_id'] = null;
+        $parentId = isset($validated['parent_id']) ? $validated['parent_id'] : null;
+        if ($parentId === '' || $parentId === null) {
+            $parentId = null;
+        } else {
+            $parentId = (int) $parentId;
         }
 
-        if (! $user->is_super_admin && $request->filled('parent_id')) {
-            if (! $user->canManagePersonId((int) $validated['parent_id'])) {
+        $spouseId = isset($validated['spouse_id']) ? $validated['spouse_id'] : null;
+        if ($spouseId === '' || $spouseId === null) {
+            $spouseId = null;
+        } else {
+            $spouseId = (int) $spouseId;
+        }
+
+        $validated['parent_id'] = $parentId;
+
+        if (! $user->is_super_admin && $parentId !== null) {
+            if (! $user->canManagePersonId($parentId)) {
                 abort(403);
             }
         }
 
-        if ($request->filled('spouse_id') && ! $user->canManagePersonId((int) $request->spouse_id)) {
+        if ($spouseId !== null && ! $user->canManagePersonId($spouseId)) {
             abort(403);
         }
 
@@ -128,22 +140,30 @@ class PersonController extends Controller
             $validated['photo'] = $photos->storeCompressed($request->file('photo'));
         }
 
-        if ($request->filled('parent_id')) {
-            $parent = Person::findOrFail($validated['parent_id']);
-            $validated['generation'] = $parent->generation + 1;
-        } elseif ($request->filled('spouse_id')) {
+        if ($parentId !== null) {
+            $parent = Person::query()->findOrFail($parentId);
+            $generation = (int) $parent->generation + 1;
+        } elseif ($spouseId !== null) {
             $validated['parent_id'] = null;
-            $validated['generation'] = 1;
+            $spouse = Person::query()->findOrFail($spouseId);
+            $generation = (int) $spouse->generation;
+            if ($generation < 1) {
+                $generation = 1;
+            }
         } elseif ($user->is_super_admin) {
-            $validated['generation'] = 1;
+            $generation = 1;
+        } else {
+            $generation = 1;
         }
 
-        $person = Person::create($validated);
+        unset($validated['spouse_id'], $validated['marriage_date']);
 
-        if ($request->filled('spouse_id')) {
+        $person = Person::create(array_merge($validated, ['generation' => $generation]));
+
+        if ($spouseId !== null) {
             $marriage = Marriage::create([
                 'person1_id' => $person->id,
-                'person2_id' => $request->spouse_id,
+                'person2_id' => $spouseId,
                 'marriage_date' => $request->marriage_date,
             ]);
             $provisioning->syncForMarriage($marriage);
