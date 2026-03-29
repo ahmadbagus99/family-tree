@@ -40,14 +40,17 @@ class UserProvisioningService
 
         $email = $person->id.'@family-tree.local';
 
-        $user = User::firstOrNew(['person_id' => $person->id]);
+        $user = User::query()->where('person_id', $person->id)->first();
+        if (! $user) {
+            $user = new User;
+            $user->person_id = $person->id;
+            $user->password = Hash::make('admin');
+        }
+
         $user->name = $person->name;
         $user->username = $this->makeUniqueUsername($person);
         $user->email = $email;
         $user->is_super_admin = false;
-        if (! $user->exists) {
-            $user->password = Hash::make('admin');
-        }
         $user->save();
 
         return $user;
