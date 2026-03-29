@@ -283,8 +283,10 @@ class PersonController extends Controller
         $pid1 = $marriage->person1_id;
         $pid2 = $marriage->person2_id;
 
+        // Satu pernikahan menghubungkan dua orang; pengurus cabang hanya punya akses ke
+        // satu sisi pohon. Wajib bisa mengelola minimal satu pihak (bukan keduanya).
         if (! $authUser->canManagePersonId($pid1)
-            || ! $authUser->canManagePersonId($pid2)) {
+            && ! $authUser->canManagePersonId($pid2)) {
             abort(403);
         }
 
