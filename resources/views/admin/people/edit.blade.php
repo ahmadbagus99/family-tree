@@ -72,8 +72,12 @@
                 <h2 class="text-lg font-semibold text-gray-900 mb-4 sm:mb-6">Hubungan Keluarga</h2>
                 <div>
                     <label for="parent_id" class="block text-sm font-semibold text-gray-700 mb-2">Orang Tua</label>
-                    <select id="parent_id" name="parent_id" class="text-sm sm:text-base">
-                        <option value="">Pilih Orang Tua (Kosongkan untuk Generasi 1)</option>
+                    <select id="parent_id" name="parent_id" class="text-sm sm:text-base" @if(!auth()->user()->is_super_admin) required @endif>
+                        @if(auth()->user()->is_super_admin)
+                            <option value="">Pilih Orang Tua (Kosongkan untuk Generasi 1)</option>
+                        @elseif($person->parent_id === null)
+                            <option value="" selected>Tanpa orang tua (kepala cabang)</option>
+                        @endif
                         @foreach($parents as $parent)
                             <option value="{{ $parent->id }}" {{ old('parent_id', $person->parent_id) == $parent->id ? 'selected' : '' }}>
                                 {{ $parent->name }} (Gen {{ $parent->generation }})
@@ -85,7 +89,8 @@
 
             <!-- Photo Section -->
             <div class="border-b border-gray-200 pb-6 sm:pb-8">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4 sm:mb-6">Foto Profil</h2>
+                <h2 class="text-lg font-semibold text-gray-900 mb-1">Foto Profil</h2>
+                <p class="text-xs text-gray-500 mb-4 sm:mb-6">Unggah hingga 12 MB; sistem mengompres & merapikan ukuran otomatis.</p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                     <div>
                         <label for="photo" class="relative flex flex-col items-center justify-center w-full min-h-[140px] sm:min-h-[160px] px-4 py-6 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/80 hover:border-blue-300 hover:bg-blue-50/30 transition-colors cursor-pointer group">

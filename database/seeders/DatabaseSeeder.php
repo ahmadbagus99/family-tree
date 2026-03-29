@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Services\UserProvisioningService;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -16,13 +17,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::updateOrCreate([
-            'email' => 'admin@example.com',
-        ], [
-            'name' => 'admin',
-            'password' => Hash::make('admin'),
-        ]);
-
         $this->call(FamilySeeder::class);
+
+        User::updateOrCreate(
+            ['username' => 'admin'],
+            [
+                'name' => 'admin',
+                'email' => 'admin@example.com',
+                'password' => Hash::make('admin'),
+                'is_super_admin' => true,
+                'person_id' => null,
+            ]
+        );
+
+        app(UserProvisioningService::class)->syncAllMarriedMales();
     }
 }

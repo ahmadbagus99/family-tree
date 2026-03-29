@@ -8,7 +8,12 @@
     foreach ($spouses as $spouse) {
         $children = $children->merge($spouse->children);
     }
-    $children = $children->unique('id')->sortBy('name')->values();
+    $children = $children->unique('id')->sortBy(function ($c) {
+        return [
+            $c->birth_date ? $c->birth_date->timestamp : PHP_INT_MAX,
+            $c->id,
+        ];
+    })->values();
 
     $descLabel = $generationLevel === 0 ? 'Anak' : ($generationLevel === 1 ? 'Cucu' : 'Keturunan');
     $partnerLabel = $person->gender === 'male' ? 'Istri' : 'Suami';

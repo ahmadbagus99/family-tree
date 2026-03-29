@@ -43,8 +43,8 @@
                     <th class="px-4 sm:px-6 py-4 text-left text-xs sm:text-sm font-semibold text-gray-900">Nama</th>
                     <th class="hidden sm:table-cell px-6 py-4 text-left text-xs sm:text-sm font-semibold text-gray-900">Kelamin</th>
                     <th class="hidden md:table-cell px-6 py-4 text-left text-xs sm:text-sm font-semibold text-gray-900">Tanggal Lahir</th>
-                    <th class="hidden md:table-cell px-6 py-4 text-left text-xs sm:text-sm font-semibold text-gray-900">Urutan Anak</th>
-                    <th class="hidden lg:table-cell px-6 py-4 text-left text-xs sm:text-sm font-semibold text-gray-900">Generasi</th>
+                    <th class="px-2 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-900 whitespace-nowrap">Urutan anak</th>
+                    <th class="px-2 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-900 whitespace-nowrap">Generasi</th>
                     <th class="hidden sm:table-cell px-6 py-4 text-left text-xs sm:text-sm font-semibold text-gray-900">Orang Tua</th>
                     <th class="px-4 sm:px-6 py-4 text-left text-xs sm:text-sm font-semibold text-gray-900">Aksi</th>
                 </tr>
@@ -70,26 +70,23 @@
                         <td class="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
                             {{ $person->birth_date ? $person->birth_date->format('d M Y') : '-' }}
                         </td>
-                        <td class="hidden md:table-cell px-6 py-4 text-sm text-gray-600">
+                        <td class="px-2 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-600 align-top">
                             @if($person->parent_id)
-                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-800">
-                                    #{{ $siblingSequenceById[$person->id] ?? '-' }}
+                                <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-medium bg-purple-100 text-purple-900" title="Urutan dalam saudara sekandung (sortir: tanggal lahir)">
+                                    Anak ke-{{ $siblingSequenceById[$person->id] ?? '?' }}
                                 </span>
                             @else
-                                -
+                                <span class="text-gray-400">—</span>
                             @endif
                         </td>
-                        <td class="hidden lg:table-cell px-6 py-4 text-sm text-gray-600">
-                            <span class="badge-info">Gen {{ $person->generation }}</span>
+                        <td class="px-2 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-600 align-top">
+                            <span class="badge-info text-[11px] sm:text-xs px-2 py-0.5">Gen {{ $person->generation }}</span>
                         </td>
                         <td class="hidden sm:table-cell px-6 py-4 text-sm text-gray-600">
                             {{ $person->parent?->name ? substr($person->parent->name, 0, 12) . (strlen($person->parent->name) > 12 ? '...' : '') : '-' }}
                         </td>
                         <td class="px-4 sm:px-6 py-4 text-sm">
                             <div class="flex items-center gap-2">
-                                <a href="{{ route('admin.people.show', $person) }}" class="btn-icon text-purple-600 border-purple-200 hover:bg-purple-50 hover:border-purple-300" title="Lihat">
-                                    <i class="fas fa-eye text-xs"></i>
-                                </a>
                                 <form action="{{ route('admin.people.destroy', $person) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')

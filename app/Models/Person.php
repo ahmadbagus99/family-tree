@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Collection;
 
 class Person extends Model
 {
@@ -40,16 +42,122 @@ class Person extends Model
         });
     }
 
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class, 'person_id');
+    }
+
     // Parent relationship
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Person::class, 'parent_id');
     }
 
+    /**
+     * Akar silsilah (orang tanpa parent_id).
+     */
+    public function familyRoot(): Person
+    {
+        $p = $this;
+        while ($p->parent_id !== null) {
+            $p = static::query()->findOrFail($p->parent_id);
+        }
+
+        return $p;
+    }
+
+    /**
+     * Semua id keturunan langsung (anak, cucu, …) dari satu orang.
+     *
+     * @return Collection<int, int>
+     */
+    public static function descendantIds(int $personId): Collection
+    {
+        $ids = collect();
+        $queue = [$personId];
+        while ($queue !== []) {
+            $id = array_shift($queue);
+            $childIds = static::query()->where('parent_id', $id)->pluck('id');
+            foreach ($childIds as $cid) {
+                $cid = (int) $cid;
+                $ids->push($cid);
+                $queue[] = $cid;
+            }
+        }
+
+        return $ids;
+    }
+
+    /**
+     * ID yang boleh dikelola oleh kepala cabang: diri sendiri, pasangan, semua keturunan (dari diri + pasangan).
+     *
+     * @return Collection<int, int>
+     */
+    public static function manageableBranchIdsFor(Person $p): Collection
+    {
+        $p->loadMissing(['person1Marriages.person2', 'person2Marriages.person1']);
+
+        $roots = collect([$p->id]);
+        foreach ($p->getSpouses() as $spouse) {
+            $roots->push($spouse->id);
+        }
+
+        $ids = collect();
+        foreach ($roots->unique()->values() as $rid) {
+            $rid = (int) $rid;
+            $ids->push($rid);
+            $ids = $ids->merge(static::descendantIds($rid));
+        }
+
+        return $ids->unique()->values();
+    }
+
     // Children relationship
     public function children(): HasMany
     {
-        return $this->hasMany(Person::class, 'parent_id');
+        return $this->hasMany(Person::class, 'parent_id')
+            ->orderByRaw('birth_date IS NULL')
+            ->orderBy('birth_date')
+            ->orderBy('id');
+    }
+
+    /**
+     * Urutan tampilan daftar (generasi → orang tua → urutan anak: lahir dulu, tanpa tanggal di akhir).
+     */
+    public function scopeOrderedByFamilyTree(Builder $query): Builder
+    {
+        return $query
+            ->orderBy('generation')
+            ->orderBy('parent_id')
+            ->orderByRaw('birth_date IS NULL')
+            ->orderBy('birth_date')
+            ->orderBy('id');
+    }
+
+    /**
+     * Peta id orang → nomor urut anak (1,2,3…) dalam satu orang tua (sama dengan urutan sort).
+     *
+     * @return array<int, int>
+     */
+    public static function siblingSequenceByIdMap(): array
+    {
+        $map = [];
+        $rows = static::query()
+            ->whereNotNull('parent_id')
+            ->orderBy('parent_id')
+            ->orderByRaw('birth_date IS NULL')
+            ->orderBy('birth_date')
+            ->orderBy('id')
+            ->get(['id', 'parent_id']);
+
+        $counterByParent = [];
+        foreach ($rows as $row) {
+            $pid = (int) $row->parent_id;
+            $counterByParent[$pid] = ($counterByParent[$pid] ?? 0) + 1;
+            $map[$row->id] = $counterByParent[$pid];
+        }
+
+        return $map;
     }
 
     // Marriages relationship

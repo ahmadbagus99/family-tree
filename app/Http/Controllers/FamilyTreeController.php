@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Person;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class FamilyTreeController extends Controller
@@ -16,10 +15,14 @@ class FamilyTreeController extends Controller
         // Daftar keluarga berdasarkan akar silsilah (generasi 1).
         $roots = Person::where('generation', 1)
             ->with(['children', 'person1Marriages.person2', 'person2Marriages.person1'])
+            ->orderByRaw('birth_date IS NULL')
+            ->orderBy('birth_date')
             ->orderBy('name')
+            ->orderBy('id')
             ->get()
             ->map(function ($root) {
                 $root->family_slug = Str::slug($root->name);
+
                 return $root;
             });
 
@@ -33,15 +36,19 @@ class FamilyTreeController extends Controller
     {
         $roots = Person::where('generation', 1)
             ->with(['children', 'person1Marriages.person2', 'person2Marriages.person1'])
+            ->orderByRaw('birth_date IS NULL')
+            ->orderBy('birth_date')
             ->orderBy('name')
+            ->orderBy('id')
             ->get();
 
         $root = $roots->first(function ($person) use ($family) {
             $slug = Str::slug($person->name);
+
             return $slug === $family || Str::contains($slug, $family);
         });
 
-        abort_if(!$root, 404);
+        abort_if(! $root, 404);
 
         return view('family-tree.show', compact('root'));
     }

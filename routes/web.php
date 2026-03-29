@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\PersonController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\FamilyTreeController;
 use App\Http\Controllers\PublicStorageFileController;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,9 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Admin Routes
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('password', [PasswordController::class, 'edit'])->name('password.edit');
+    Route::put('password', [PasswordController::class, 'update'])->name('password.update');
+
     Route::resource('people', PersonController::class);
     Route::post('people/{person}/marriages', [PersonController::class, 'addMarriage'])->name('people.marriages');
     Route::delete('marriages/{marriage}', [PersonController::class, 'deleteMarriage'])->name('people.marriages.delete');

@@ -93,8 +93,10 @@
                     <div class="p-4 sm:p-6 space-y-4 sm:space-y-5">
                         <div>
                             <label for="parent_id" class="block text-sm font-semibold text-gray-800 mb-1.5">Orang Tua</label>
-                            <select id="parent_id" name="parent_id" class="text-sm sm:text-base min-h-[44px] sm:min-h-0">
-                                <option value="">Tanpa orang tua (Generasi 1)</option>
+                            <select id="parent_id" name="parent_id" class="text-sm sm:text-base min-h-[44px] sm:min-h-0" @if(!auth()->user()->is_super_admin) required @endif>
+                                @if(auth()->user()->is_super_admin)
+                                    <option value="">Tanpa orang tua (Generasi 1)</option>
+                                @endif
                                 @foreach($parents as $parent)
                                     <option value="{{ $parent->id }}" {{ old('parent_id') == $parent->id ? 'selected' : '' }}>
                                         {{ $parent->name }} (Gen {{ $parent->generation }})
@@ -114,6 +116,7 @@
                         </span>
                         <div class="min-w-0">
                             <h2 id="section-photo" class="text-base sm:text-lg font-bold text-gray-900">Foto Profil</h2>
+                            <p class="text-xs text-gray-500 mt-0.5">Unggah hingga 12 MB; sistem akan mengompres & merapikan ukuran otomatis.</p>
                             <p class="text-xs sm:text-sm text-gray-500 mt-0.5">Opsional — JPG atau PNG, maks. 2MB</p>
                         </div>
                     </div>

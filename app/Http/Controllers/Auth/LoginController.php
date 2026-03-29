@@ -32,13 +32,15 @@ class LoginController extends Controller
         $password = $credentials['password'];
 
         $user = User::query()
-            ->where('name', $username)
+            ->where('username', $username)
+            ->orWhere('name', $username)
             ->orWhere('email', $username)
             ->first();
 
         if ($user && Hash::check($password, $user->password)) {
             Auth::login($user);
             $request->session()->regenerate();
+
             return redirect()->route('admin.people.index');
         }
 
@@ -55,7 +57,7 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
+
         return redirect('/');
     }
 }

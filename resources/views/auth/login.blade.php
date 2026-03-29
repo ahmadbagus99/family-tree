@@ -12,8 +12,8 @@
                     <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/20 border border-white/30 flex items-center justify-center text-2xl mx-auto mb-3">
                         <i class="fas fa-user-shield"></i>
                     </div>
-                    <h2 class="text-2xl sm:text-3xl font-bold">Login Admin</h2>
-                    <p class="text-white/90 text-sm sm:text-base mt-1">Masuk untuk kelola data keluarga</p>
+                    <h2 class="text-2xl sm:text-3xl font-bold">Login pengurus</h2>
+                    <p class="text-white/90 text-sm sm:text-base mt-1">Pakai nama atau username akun Anda (laki-laki berkeluarga). Password default: <strong>admin</strong></p>
                 </div>
             </div>
 
@@ -22,10 +22,10 @@
                     @csrf
 
                     <div>
-                        <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">Username</label>
+                        <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">Nama / username</label>
                         <input id="username" name="username" type="text" autocomplete="username" required
                             class="text-sm sm:text-base min-h-[44px] {{ $errors->has('username') ? 'border-red-500' : '' }}"
-                            placeholder="masukkan username"
+                            placeholder="contoh: Pak Budi atau pak-budi-5"
                             value="{{ old('username') }}">
                         @error('username')
                             <p class="text-red-600 text-xs sm:text-sm mt-2"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>

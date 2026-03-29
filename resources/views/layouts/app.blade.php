@@ -52,7 +52,11 @@
 
             <div class="border-t border-zinc-800 p-4">
                 @if(auth()->check())
-                    <p class="mb-3 truncate text-xs text-zinc-500">{{ auth()->user()->name }}</p>
+                    <p class="mb-2 truncate text-xs text-zinc-500">{{ auth()->user()->name }}</p>
+                    <a href="{{ route('admin.password.edit') }}" class="mb-3 flex w-full items-center justify-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/40 px-3 py-2 text-xs font-medium text-zinc-200 transition hover:bg-zinc-800">
+                        <i class="fas fa-key"></i>
+                        Ubah password
+                    </a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/80 px-3 py-2 text-sm font-medium text-zinc-200 transition hover:bg-zinc-800">
