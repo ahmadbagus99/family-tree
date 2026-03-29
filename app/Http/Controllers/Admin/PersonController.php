@@ -35,6 +35,10 @@ class PersonController extends Controller
             $people->whereIn('id', $user->manageablePersonIds());
         }
 
+        if ($user->person_id) {
+            $people->orderByRaw('CASE WHEN people.id = ? THEN 0 ELSE 1 END', [$user->person_id]);
+        }
+
         $people = $people->orderedByFamilyTree()->paginate(15);
 
         $siblingSequenceById = Person::siblingSequenceByIdMap();
