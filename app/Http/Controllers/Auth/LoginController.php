@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 
 class LoginController extends Controller
 {
@@ -32,9 +33,13 @@ class LoginController extends Controller
         $password = $credentials['password'];
 
         $user = User::query()
-            ->where('username', $username)
-            ->orWhere('name', $username)
-            ->orWhere('email', $username)
+            ->where(function ($q) use ($username) {
+                if (Schema::hasColumn('users', 'username')) {
+                    $q->where('username', $username);
+                }
+                $q->orWhere('name', $username)
+                    ->orWhere('email', $username);
+            })
             ->first();
 
         if ($user && Hash::check($password, $user->password)) {
