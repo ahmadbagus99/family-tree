@@ -1,15 +1,21 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PersonController;
-use App\Http\Controllers\FamilyTreeController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\FamilyTreeController;
+use App\Http\Controllers\PublicStorageFileController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 // Public Family Tree Views
+// File upload (disk public) — lewat app agar tidak kena 403 symlink / web server
+Route::get('/media/{path}', [PublicStorageFileController::class, 'show'])
+    ->where('path', '.*')
+    ->name('public-storage.file');
+
 Route::get('/family-tree', [FamilyTreeController::class, 'index'])->name('family-tree.index');
 Route::get('/family-tree/person/{person}', [FamilyTreeController::class, 'show'])->name('family-tree.show');
 Route::get('/family-tree/{family}', [FamilyTreeController::class, 'family'])->name('family-tree.family');
@@ -25,5 +31,3 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('people/{person}/marriages', [PersonController::class, 'addMarriage'])->name('people.marriages');
     Route::delete('marriages/{marriage}', [PersonController::class, 'deleteMarriage'])->name('people.marriages.delete');
 });
-
-

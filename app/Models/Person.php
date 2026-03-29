@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Facades\Storage;
 
 class Person extends Model
 {
@@ -27,7 +26,8 @@ class Person extends Model
     ];
 
     /**
-     * URL publik foto (memakai disk public + APP_URL). Gunakan ini di view, bukan asset('storage/...').
+     * URL publik foto. Memakai route /media/... (bukan /storage/...) supaya file dilayani Laravel
+     * dan tidak bergantung symlink public/storage (sering menyebabkan 403 di hosting).
      */
     protected function photoUrl(): Attribute
     {
@@ -36,7 +36,7 @@ class Person extends Model
                 return null;
             }
 
-            return Storage::disk('public')->url($this->photo);
+            return route('public-storage.file', ['path' => $this->photo], absolute: true);
         });
     }
 
