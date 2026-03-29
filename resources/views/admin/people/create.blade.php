@@ -93,9 +93,11 @@
                     <div class="p-4 sm:p-6 space-y-4 sm:space-y-5">
                         <div>
                             <label for="parent_id" class="block text-sm font-semibold text-gray-800 mb-1.5">Orang Tua</label>
-                            <select id="parent_id" name="parent_id" class="text-sm sm:text-base min-h-[44px] sm:min-h-0" @if(!auth()->user()->is_super_admin) required @endif>
+                            <select id="parent_id" name="parent_id" class="text-sm sm:text-base min-h-[44px] sm:min-h-0">
                                 @if(auth()->user()->is_super_admin)
-                                    <option value="">Tanpa orang tua (Generasi 1)</option>
+                                    <option value="" @selected(old('parent_id') === null || old('parent_id') === '')>Tanpa orang tua (Generasi 1)</option>
+                                @else
+                                    <option value="" @selected(old('parent_id') === null || old('parent_id') === '')>Tanpa orang tua di pohon — wajib pilih pasangan di bawah</option>
                                 @endif
                                 @foreach($parents as $parent)
                                     <option value="{{ $parent->id }}" {{ old('parent_id') == $parent->id ? 'selected' : '' }}>
@@ -103,8 +105,49 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <p class="text-gray-500 text-xs mt-2 leading-relaxed">Pilih induk di pohon, atau biarkan kosong untuk akar silsilah.</p>
+                            @if(auth()->user()->is_super_admin)
+                                <p class="text-gray-500 text-xs mt-2 leading-relaxed">Pilih induk di pohon, atau biarkan kosong untuk akar silsilah.</p>
+                            @else
+                                <p class="text-gray-500 text-xs mt-2 leading-relaxed">Kosongkan hanya untuk pasangan (suami/istri) yang tidak punya orang tua di silsilah ini — lalu pilih pasangan yang sudah ada di cabang Anda.</p>
+                            @endif
+                            @error('parent_id')
+                                <p class="text-red-600 text-xs sm:text-sm mt-1.5 flex items-start gap-1.5"><i class="fas fa-exclamation-circle mt-0.5 shrink-0"></i><span>{{ $message }}</span></p>
+                            @enderror
                         </div>
+
+                        @if($potentialSpouses->isNotEmpty())
+                            <div class="rounded-xl border border-pink-100 bg-pink-50/50 p-4 sm:p-5 space-y-4">
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                        <i class="fas fa-ring text-pink-600"></i>
+                                        Pasangan (pernikahan)
+                                    </h3>
+                                    <p class="text-xs text-gray-600 mt-1">Jika orang tua dikosongkan, pilih pasangan di cabang Anda (misalnya suami/istri dari luar garis keturunan).</p>
+                                </div>
+                                <div>
+                                    <label for="spouse_id" class="block text-sm font-semibold text-gray-800 mb-1.5">Pilih pasangan</label>
+                                    <select id="spouse_id" name="spouse_id" class="text-sm sm:text-base min-h-[44px] sm:min-h-0 w-full">
+                                        <option value="">— Tidak ada / isi nanti —</option>
+                                        @foreach($potentialSpouses as $spouse)
+                                            <option value="{{ $spouse->id }}" {{ old('spouse_id') == $spouse->id ? 'selected' : '' }}>
+                                                {{ $spouse->name }} (Gen {{ $spouse->generation }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('spouse_id')
+                                        <p class="text-red-600 text-xs sm:text-sm mt-1.5 flex items-start gap-1.5"><i class="fas fa-exclamation-circle mt-0.5 shrink-0"></i><span>{{ $message }}</span></p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label for="marriage_date" class="block text-sm font-semibold text-gray-800 mb-1.5">Tanggal pernikahan</label>
+                                    <input type="date" id="marriage_date" name="marriage_date" class="text-sm sm:text-base min-h-[44px] sm:min-h-0 w-full max-w-full" value="{{ old('marriage_date') }}">
+                                </div>
+                            </div>
+                        @elseif(!auth()->user()->is_super_admin)
+                            <p class="text-amber-800 text-xs sm:text-sm rounded-lg bg-amber-50 border border-amber-100 px-3 py-2.5">
+                                Untuk menambah anggota tanpa orang tua di pohon, harus ada minimal satu orang lain di cabang Anda yang bisa dipilih sebagai pasangan.
+                            </p>
+                        @endif
                     </div>
                 </section>
 

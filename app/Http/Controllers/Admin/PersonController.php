@@ -74,7 +74,12 @@ class PersonController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('admin.people.create', compact('parents'));
+        $potentialSpouses = Person::query()
+            ->whereIn('id', $manageable)
+            ->orderBy('name')
+            ->get();
+
+        return view('admin.people.create', compact('parents', 'potentialSpouses'));
     }
 
     /**
@@ -89,22 +94,34 @@ class PersonController extends Controller
             'birth_date' => 'nullable|date',
             'death_date' => 'nullable|date',
             'gender' => 'nullable|in:male,female',
-            'parent_id' => 'nullable|exists:people,id',
+            'parent_id' => [
+                'nullable',
+                'exists:people,id',
+                Rule::requiredIf(fn () => ! $user->is_super_admin && ! $request->filled('spouse_id')),
+            ],
             'photo' => 'nullable|image|max:12288',
-            'spouse_id' => 'nullable|exists:people,id',
+            'spouse_id' => [
+                'nullable',
+                'exists:people,id',
+                Rule::requiredIf(fn () => ! $user->is_super_admin && ! $request->filled('parent_id')),
+            ],
             'marriage_date' => 'nullable|date',
         ];
 
-        if (! $user->is_super_admin) {
-            $rules['parent_id'] = 'required|exists:people,id';
-        }
-
         $validated = $request->validate($rules);
 
-        if (! $user->is_super_admin && isset($validated['parent_id'])) {
+        if (! $request->filled('parent_id')) {
+            $validated['parent_id'] = null;
+        }
+
+        if (! $user->is_super_admin && $request->filled('parent_id')) {
             if (! $user->canManagePersonId((int) $validated['parent_id'])) {
                 abort(403);
             }
+        }
+
+        if ($request->filled('spouse_id') && ! $user->canManagePersonId((int) $request->spouse_id)) {
+            abort(403);
         }
 
         if ($request->hasFile('photo')) {
@@ -114,6 +131,9 @@ class PersonController extends Controller
         if ($request->filled('parent_id')) {
             $parent = Person::findOrFail($validated['parent_id']);
             $validated['generation'] = $parent->generation + 1;
+        } elseif ($request->filled('spouse_id')) {
+            $validated['parent_id'] = null;
+            $validated['generation'] = 1;
         } elseif ($user->is_super_admin) {
             $validated['generation'] = 1;
         }
@@ -121,9 +141,6 @@ class PersonController extends Controller
         $person = Person::create($validated);
 
         if ($request->filled('spouse_id')) {
-            if (! $user->canManagePersonId((int) $request->spouse_id)) {
-                abort(403);
-            }
             $marriage = Marriage::create([
                 'person1_id' => $person->id,
                 'person2_id' => $request->spouse_id,
@@ -262,7 +279,7 @@ class PersonController extends Controller
 
         $user = auth()->user();
         if (! $user->canManagePersonId((int) $validated['person1_id'])
-            || ! $user->canManagePersonId((int) $validated['person2_id'])) {
+            && ! $user->canManagePersonId((int) $validated['person2_id'])) {
             abort(403);
         }
 
