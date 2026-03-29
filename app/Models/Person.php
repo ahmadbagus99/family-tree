@@ -91,19 +91,31 @@ class Person extends Model
     /**
      * ID yang boleh dikelola oleh kepala cabang: diri sendiri, pasangan, semua keturunan (dari diri + pasangan).
      *
+     * Pasangan di-resolve lewat query ke `marriages` (bukan hanya relasi yang sudah di-load) supaya daftar admin
+     * selalu mencakup keturunan dari pasangan (mis. anak yang parent_id mengarah ke suami/istri).
+     *
      * @return Collection<int, int>
      */
     public static function manageableBranchIdsFor(Person $p): Collection
     {
-        $p->loadMissing(['person1Marriages.person2', 'person2Marriages.person1']);
+        $pId = (int) $p->id;
 
-        $roots = collect([$p->id]);
-        foreach ($p->getSpouses() as $spouse) {
-            $roots->push($spouse->id);
-        }
+        $spouseIds = Marriage::query()
+            ->where(function ($q) use ($pId) {
+                $q->where('person1_id', $pId)
+                    ->orWhere('person2_id', $pId);
+            })
+            ->get()
+            ->map(function (Marriage $m) use ($pId) {
+                return (int) $m->person1_id === $pId ? (int) $m->person2_id : (int) $m->person1_id;
+            })
+            ->unique()
+            ->values();
+
+        $roots = collect([$pId])->merge($spouseIds)->unique()->values();
 
         $ids = collect();
-        foreach ($roots->unique()->values() as $rid) {
+        foreach ($roots as $rid) {
             $rid = (int) $rid;
             $ids->push($rid);
             $ids = $ids->merge(static::descendantIds($rid));
