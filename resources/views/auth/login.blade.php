@@ -1,9 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.guest')
 
 @section('title', 'Login - Admin')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 py-8 sm:py-12 px-4">
+<div class="flex min-h-[calc(100vh-12rem)] items-center justify-center bg-gradient-to-br from-slate-50 to-purple-50/40 py-8 sm:py-12 px-4">
     <div class="w-full max-w-md">
         <div class="card overflow-hidden border-0 ring-1 ring-gray-100/80 shadow-xl">
             <div class="hero-gradient px-6 py-7 sm:px-8 sm:py-9 text-white relative overflow-hidden">
@@ -48,22 +48,22 @@
                     </button>
                 </form>
 
-                <div class="mt-6 p-4 sm:p-5 bg-blue-50 border border-blue-200 rounded-xl">
-                    <h3 class="font-semibold text-blue-900 mb-2 text-sm sm:text-base">Default Credentials</h3>
-                    <div class="space-y-2 text-xs sm:text-sm text-blue-900">
+                <div class="mt-6 p-4 sm:p-5 bg-purple-50 border border-purple-200 rounded-xl">
+                    <h3 class="font-semibold text-purple-900 mb-2 text-sm sm:text-base">Default Credentials</h3>
+                    <div class="space-y-2 text-xs sm:text-sm text-purple-900">
                         <div class="flex items-center gap-2">
-                            <span class="w-20 text-blue-700">Username</span>
-                            <span class="font-mono bg-white px-2 py-1 rounded border border-blue-200">admin</span>
+                            <span class="w-20 text-purple-700">Username</span>
+                            <span class="font-mono bg-white px-2 py-1 rounded border border-purple-200">admin</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="w-20 text-blue-700">Password</span>
-                            <span class="font-mono bg-white px-2 py-1 rounded border border-blue-200">admin</span>
+                            <span class="w-20 text-purple-700">Password</span>
+                            <span class="font-mono bg-white px-2 py-1 rounded border border-purple-200">admin</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="text-center mt-6">
-                    <a href="/" class="text-blue-600 hover:text-blue-800 font-medium text-sm sm:text-base transition-colors">
+                    <a href="/" class="text-purple-600 hover:text-purple-800 font-medium text-sm sm:text-base transition-colors">
                         ← Kembali ke Beranda
                     </a>
                 </div>

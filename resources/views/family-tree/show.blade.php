@@ -6,14 +6,16 @@
 
 @section('title', $focusPerson->name)
 
+@section('header', $focusPerson->name)
+
 @section('content')
-<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-    <a href="{{ route('family-tree.index') }}" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-5 sm:mb-6 font-medium min-h-[44px] px-2 -ml-2 rounded-lg hover:bg-blue-50 transition-colors">
+<div class="max-w-6xl mx-auto py-2 sm:py-4">
+    <a href="{{ route('family-tree.index') }}" class="inline-flex items-center gap-2 text-purple-600 hover:text-purple-800 mb-5 sm:mb-6 font-medium min-h-[44px] px-2 -ml-2 rounded-lg hover:bg-purple-50 transition-colors">
         <i class="fas fa-arrow-left"></i>
         <span>Kembali ke Silsilah</span>
     </a>
 
-    <section class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 to-blue-600 p-5 sm:p-7 text-white shadow-lg mb-6 sm:mb-8">
+    <section class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-600 to-indigo-700 p-5 sm:p-7 text-white shadow-lg mb-6 sm:mb-8">
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,.22),transparent_45%)]"></div>
         <div class="relative z-10 flex items-center gap-3 sm:gap-4">
             <span class="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-white/20 border border-white/30 flex items-center justify-center text-xl">

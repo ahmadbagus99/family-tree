@@ -2,9 +2,11 @@
 
 @section('title', $person->name . ' - Admin')
 
+@section('header', $person->name)
+
 @section('content')
-<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-    <a href="{{ route('admin.people.index') }}" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-6 sm:mb-8 font-medium">
+<div class="max-w-5xl mx-auto">
+    <a href="{{ route('admin.people.index') }}" class="inline-flex items-center gap-2 text-purple-600 hover:text-purple-800 mb-6 sm:mb-8 font-medium">
         <i class="fas fa-arrow-left"></i>
         <span>Kembali ke Daftar</span>
     </a>
@@ -14,7 +16,7 @@
             <!-- Photo Section -->
             <div class="bg-gradient-to-br from-blue-50 to-purple-50 p-6 sm:p-8 flex flex-col items-center justify-center">
                 @if($person->photo)
-                    <img src="{{ asset('storage/' . $person->photo) }}" alt="{{ $person->name }}" class="w-40 h-40 sm:w-48 sm:h-48 rounded-full object-cover border-8 border-white shadow-lg">
+                    <img src="{{ $person->photo_url }}" alt="{{ $person->name }}" class="w-40 h-40 sm:w-48 sm:h-48 rounded-full object-cover border-8 border-white shadow-lg">
                 @else
                     <div class="w-40 h-40 sm:w-48 sm:h-48 rounded-full bg-gradient-to-br from-blue-200 to-purple-200 flex items-center justify-center text-8xl border-8 border-white shadow-lg">
                         👤

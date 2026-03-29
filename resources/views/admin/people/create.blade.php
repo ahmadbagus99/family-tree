@@ -2,10 +2,12 @@
 
 @section('title', 'Tambah Anggota Keluarga - Admin')
 
+@section('header', 'Tambah anggota')
+
 @section('content')
-<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-10">
-    <a href="{{ route('admin.people.index') }}" class="inline-flex items-center gap-2 sm:gap-3 text-blue-600 hover:text-blue-800 mb-5 sm:mb-6 font-medium text-sm sm:text-base min-h-[44px] sm:min-h-0 px-1 -ml-1 rounded-xl hover:bg-blue-50/80 transition-colors">
-        <span class="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full bg-white shadow-sm border border-gray-100 text-blue-600">
+<div class="max-w-2xl mx-auto pb-8 sm:pb-10">
+    <a href="{{ route('admin.people.index') }}" class="inline-flex items-center gap-2 sm:gap-3 text-purple-600 hover:text-purple-800 mb-5 sm:mb-6 font-medium text-sm sm:text-base min-h-[44px] sm:min-h-0 px-1 -ml-1 rounded-xl hover:bg-purple-50/80 transition-colors">
+        <span class="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full bg-white shadow-sm border border-gray-100 text-purple-600">
             <i class="fas fa-arrow-left text-sm"></i>
         </span>
         <span>Kembali ke Daftar</span>

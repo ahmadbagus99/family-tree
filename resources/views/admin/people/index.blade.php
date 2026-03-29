@@ -2,13 +2,15 @@
 
 @section('title', 'Kelola Data Keluarga - Admin')
 
+@section('header', 'Kelola data keluarga')
+
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="max-w-7xl mx-auto">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
             <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
-                <i class="fas fa-users text-blue-600 mr-3"></i>
+                <i class="fas fa-users text-purple-600 mr-3"></i>
                 Kelola Data Keluarga
             </h1>
             <p class="text-gray-600 text-sm sm:text-base">Atur dan kelola informasi anggota keluarga</p>
@@ -24,7 +26,7 @@
             <p class="text-sm font-semibold text-gray-800 mb-3">Per Keluarga</p>
             <div class="flex flex-wrap gap-2">
                 @foreach($families as $family)
-                    <a href="{{ route('family-tree.family', $family->family_slug) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs sm:text-sm font-medium transition-colors">
+                    <a href="{{ route('family-tree.family', $family->family_slug) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50 text-purple-700 hover:bg-purple-100 text-xs sm:text-sm font-medium transition-colors">
                         <i class="fas fa-tree text-[11px]"></i>
                         <span>{{ $family->name }}</span>
                     </a>
@@ -51,17 +53,17 @@
                 @forelse($people as $person)
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-4 sm:px-6 py-4">
-                            <div class="flex items-center space-x-3">
+                            <a href="{{ route('admin.people.edit', $person) }}" class="group flex items-center gap-3 rounded-lg -m-1 p-1 text-left transition-colors hover:bg-purple-50/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2" title="Edit {{ $person->name }}">
                                 @if($person->photo)
-                                    <img src="{{ asset('storage/' . $person->photo) }}" alt="{{ $person->name }}" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover">
+                                    <img src="{{ $person->photo_url }}" alt="{{ $person->name }}" class="pointer-events-none w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full object-cover ring-1 ring-gray-200 group-hover:ring-purple-200">
                                 @else
-                                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-100 flex items-center justify-center text-sm">👤</div>
+                                    <span class="pointer-events-none flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full bg-purple-100 text-sm ring-1 ring-gray-200 group-hover:bg-purple-200/80">👤</span>
                                 @endif
-                                <span class="font-medium text-gray-900 text-sm sm:text-base line-clamp-2">{{ $person->name }}</span>
-                            </div>
+                                <span class="font-medium text-gray-900 group-hover:text-purple-800 group-hover:underline decoration-purple-400 underline-offset-2 text-sm sm:text-base line-clamp-2">{{ $person->name }}</span>
+                            </a>
                         </td>
                         <td class="hidden sm:table-cell px-6 py-4 text-sm text-gray-600">
-                            <span class="inline-block px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                            <span class="inline-block px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-800">
                                 {{ $person->gender === 'male' ? '👨 L' : ($person->gender === 'female' ? '👩 P' : '-') }}
                             </span>
                         </td>
@@ -85,11 +87,8 @@
                         </td>
                         <td class="px-4 sm:px-6 py-4 text-sm">
                             <div class="flex items-center gap-2">
-                                <a href="{{ route('admin.people.show', $person) }}" class="btn-icon text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300" title="Lihat">
+                                <a href="{{ route('admin.people.show', $person) }}" class="btn-icon text-purple-600 border-purple-200 hover:bg-purple-50 hover:border-purple-300" title="Lihat">
                                     <i class="fas fa-eye text-xs"></i>
-                                </a>
-                                <a href="{{ route('admin.people.edit', $person) }}" class="btn-icon text-amber-700 border-amber-200 hover:bg-amber-50 hover:border-amber-300" title="Edit">
-                                    <i class="fas fa-edit text-xs"></i>
                                 </a>
                                 <form action="{{ route('admin.people.destroy', $person) }}" method="POST" class="inline">
                                     @csrf

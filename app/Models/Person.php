@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Storage;
 
 class Person extends Model
 {
@@ -23,6 +25,20 @@ class Person extends Model
         'birth_date' => 'date',
         'death_date' => 'date',
     ];
+
+    /**
+     * URL publik foto (memakai disk public + APP_URL). Gunakan ini di view, bukan asset('storage/...').
+     */
+    protected function photoUrl(): Attribute
+    {
+        return Attribute::get(function (): ?string {
+            if (! $this->photo) {
+                return null;
+            }
+
+            return Storage::disk('public')->url($this->photo);
+        });
+    }
 
     // Parent relationship
     public function parent(): BelongsTo
@@ -63,8 +79,9 @@ class Person extends Model
 
     public function getSpouses()
     {
-        $spouse1 = $this->person1Marriages->map(fn($m) => $m->person2);
-        $spouse2 = $this->person2Marriages->map(fn($m) => $m->person1);
+        $spouse1 = $this->person1Marriages->map(fn ($m) => $m->person2);
+        $spouse2 = $this->person2Marriages->map(fn ($m) => $m->person1);
+
         return $spouse1->concat($spouse2);
     }
 }

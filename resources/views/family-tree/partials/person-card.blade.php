@@ -17,7 +17,7 @@
                 <div class="relative mb-3 flex justify-center">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white shadow-lg overflow-hidden flex-shrink-0 bg-white">
                         @if($person->photo)
-                            <img src="{{ asset('storage/' . $person->photo) }}" alt="{{ $person->name }}" class="w-full h-full object-cover">
+                            <img src="{{ $person->photo_url }}" alt="{{ $person->name }}" class="w-full h-full object-cover">
                         @else
                             <div class="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-200 flex items-center justify-center text-3xl sm:text-4xl">
                                 👤

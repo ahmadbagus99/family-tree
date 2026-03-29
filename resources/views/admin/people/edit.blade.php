@@ -2,9 +2,11 @@
 
 @section('title', 'Edit ' . $person->name . ' - Admin')
 
+@section('header', 'Edit data')
+
 @section('content')
-<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-10">
-    <a href="{{ route('admin.people.index') }}" class="inline-flex items-center gap-2 sm:gap-3 text-blue-600 hover:text-blue-800 mb-5 sm:mb-6 font-medium text-sm sm:text-base min-h-[44px] sm:min-h-0 px-1 -ml-1 rounded-xl hover:bg-blue-50/80 transition-colors">
+<div class="max-w-3xl mx-auto pb-8 sm:pb-10">
+    <a href="{{ route('admin.people.index') }}" class="inline-flex items-center gap-2 sm:gap-3 text-purple-600 hover:text-purple-800 mb-5 sm:mb-6 font-medium text-sm sm:text-base min-h-[44px] sm:min-h-0 px-1 -ml-1 rounded-xl hover:bg-purple-50/80 transition-colors">
         <i class="fas fa-arrow-left"></i>
         <span>Kembali ke Daftar</span>
     </a>
@@ -103,7 +105,7 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Foto Saat Ini</label>
                         <img
                             id="photo-preview"
-                            src="{{ $person->photo ? asset('storage/' . $person->photo) : '' }}"
+                            src="{{ $person->photo_url ?? '' }}"
                             alt="{{ $person->name }}"
                             class="h-32 w-32 object-cover rounded-lg shadow-md {{ $person->photo ? '' : 'hidden' }}"
                         >
