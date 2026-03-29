@@ -30,7 +30,7 @@
         </div>
 
         <div class="p-5 sm:p-8 bg-gradient-to-b from-white to-gray-50/50">
-        <form action="{{ route('admin.people.update', $person) }}" method="POST" enctype="multipart/form-data" class="form-stack space-y-6 sm:space-y-8">
+        <form id="form-edit-person" action="{{ route('admin.people.update', $person) }}" method="POST" enctype="multipart/form-data" class="form-stack space-y-6 sm:space-y-8">
             @csrf
             @method('PUT')
 
@@ -103,7 +103,7 @@
                                 <span class="text-xs text-gray-500 hidden sm:inline">atau seret file</span>
                             </span>
                         </label>
-                        <p class="text-gray-500 text-xs mt-2">Format: JPG, PNG. Maks. 2MB.</p>
+                        <p class="text-gray-500 text-xs mt-2">Format: JPG, PNG. Maks. 12 MB.</p>
                     </div>
 
                     <div>
@@ -120,8 +120,9 @@
                     </div>
                 </div>
             </div>
+        </form>
 
-            <!-- Marriage Management Section -->
+            <!-- Marriage Management Section (forms must not nest inside form-edit-person) -->
             <div class="border-b border-gray-200 pb-6 sm:pb-8">
                 <h2 class="text-lg font-semibold text-gray-900 mb-4 sm:mb-6">
                     <i class="fas fa-ring text-pink-600 mr-2"></i>
@@ -133,26 +134,35 @@
                         <h3 class="font-semibold text-gray-900 mb-3 sm:mb-4">Pernikahan Saat Ini</h3>
                         <div class="space-y-2">
                             @foreach($marriages as $marriage)
-                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-pink-50 p-4 rounded-lg">
-                                    <div>
-                                        <p class="font-medium text-gray-900">
-                                            {{ $person->id === $marriage->person1_id ? $marriage->person2->name : $marriage->person1->name }}
-                                        </p>
-                                        @if($marriage->marriage_date)
-                                            <p class="text-xs sm:text-sm text-gray-600 mt-1">
-                                                <i class="fas fa-calendar mr-1"></i>
-                                                {{ $marriage->marriage_date->format('d M Y') }}
+                                <form
+                                    action="{{ route('admin.people.marriages.delete', $marriage) }}"
+                                    method="POST"
+                                    class="block"
+                                    onsubmit="return confirm('Hapus pernikahan ini?');"
+                                >
+                                    @csrf
+                                    @method('DELETE')
+                                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-pink-50 p-4 rounded-lg">
+                                        <div>
+                                            <p class="font-medium text-gray-900">
+                                                {{ $person->id === $marriage->person1_id ? $marriage->person2->name : $marriage->person1->name }}
                                             </p>
-                                        @endif
-                                    </div>
+                                            @if($marriage->marriage_date)
+                                                <p class="text-xs sm:text-sm text-gray-600 mt-1">
+                                                    <i class="fas fa-calendar mr-1"></i>
+                                                    {{ $marriage->marriage_date->format('d M Y') }}
+                                                </p>
+                                            @endif
+                                        </div>
                                         <button
-                                            type="button"
+                                            type="submit"
                                             class="text-red-600 hover:text-red-800 px-3 py-1 min-h-[40px] sm:min-h-0 self-start sm:self-auto"
-                                            onclick="submitDeleteMarriage('{{ route('admin.people.marriages.delete', $marriage) }}')"
-                                            aria-label="Hapus pernikahan">
+                                            aria-label="Hapus pernikahan"
+                                        >
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
-                                </div>
+                                    </div>
+                                </form>
                             @endforeach
                         </div>
                     </div>
@@ -191,27 +201,16 @@
                     <i class="fas fa-times mr-2"></i>
                     Batal
                 </a>
-                <button type="submit" class="btn-primary text-center min-h-[48px] sm:min-h-0 flex items-center justify-center gap-2 px-6 w-full sm:w-auto sm:min-w-[180px] shadow-md hover:shadow-lg">
+                <button type="submit" form="form-edit-person" class="btn-primary text-center min-h-[48px] sm:min-h-0 flex items-center justify-center gap-2 px-6 w-full sm:w-auto sm:min-w-[180px] shadow-md hover:shadow-lg">
                     <i class="fas fa-save"></i>
                     <span>Simpan Perubahan</span>
                 </button>
             </div>
-        </form>
         </div>
     </div>
 </div>
 
 <script>
-function submitDeleteMarriage(actionUrl) {
-    if (!confirm('Hapus pernikahan ini?')) return;
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = actionUrl;
-    form.innerHTML = `@csrf<input type="hidden" name="_method" value="DELETE">`;
-    document.body.appendChild(form);
-    form.submit();
-}
-
 // Photo preview (opsional)
 (function () {
     var input = document.getElementById('photo');

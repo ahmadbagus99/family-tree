@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\ProfilePhotoService;
 use App\Services\UserProvisioningService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -274,14 +275,16 @@ class PersonController extends Controller
     /**
      * Delete marriage between two people.
      */
-    public function deleteMarriage(Marriage $marriage, UserProvisioningService $provisioning)
+    public function deleteMarriage(Request $request, Marriage $marriage)
     {
-        $user = auth()->user();
+        $authUser = auth()->user();
+        $authUserId = $authUser->id;
+
         $pid1 = $marriage->person1_id;
         $pid2 = $marriage->person2_id;
 
-        if (! $user->canManagePersonId($pid1)
-            || ! $user->canManagePersonId($pid2)) {
+        if (! $authUser->canManagePersonId($pid1)
+            || ! $authUser->canManagePersonId($pid2)) {
             abort(403);
         }
 
@@ -291,13 +294,24 @@ class PersonController extends Controller
             $p = Person::find($pid);
             if ($p && $p->gender === 'male') {
                 $hasMarriage = Marriage::query()
-                    ->where('person1_id', $p->id)
-                    ->orWhere('person2_id', $p->id)
+                    ->where(function ($q) use ($p) {
+                        $q->where('person1_id', $p->id)
+                            ->orWhere('person2_id', $p->id);
+                    })
                     ->exists();
+
                 if (! $hasMarriage) {
                     User::query()->where('person_id', $p->id)->delete();
                 }
             }
+        }
+
+        if (! User::query()->whereKey($authUserId)->exists()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->with('success', 'Pernikahan dihapus. Akun login Anda dinonaktifkan karena tidak ada lagi pasangan; silakan hubungi admin jika perlu.');
         }
 
         return back()->with('success', 'Pernikahan berhasil dihapus!');
