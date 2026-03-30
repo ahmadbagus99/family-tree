@@ -67,12 +67,12 @@
 
                             <div>
                                 <label for="birth_date" class="block text-sm font-semibold text-gray-800 mb-1.5">Tanggal Lahir</label>
-                                <input type="date" id="birth_date" name="birth_date" class="text-sm sm:text-base min-h-[44px] sm:min-h-0" value="{{ old('birth_date') }}">
+                                <input type="text" id="birth_date" name="birth_date" class="js-datepicker text-sm sm:text-base min-h-[44px] sm:min-h-0" value="{{ old('birth_date') }}" placeholder="YYYY-MM-DD" autocomplete="off">
                             </div>
 
                             <div class="sm:col-span-2">
                                 <label for="death_date" class="block text-sm font-semibold text-gray-800 mb-1.5">Tanggal Meninggal</label>
-                                <input type="date" id="death_date" name="death_date" class="text-sm sm:text-base min-h-[44px] sm:min-h-0 max-w-full" value="{{ old('death_date') }}">
+                                <input type="text" id="death_date" name="death_date" class="js-datepicker text-sm sm:text-base min-h-[44px] sm:min-h-0 max-w-full" value="{{ old('death_date') }}" placeholder="YYYY-MM-DD" autocomplete="off">
                                 <p class="text-gray-500 text-xs mt-2 leading-relaxed">Kosongkan jika masih hidup.</p>
                             </div>
                         </div>
@@ -140,7 +140,7 @@
                                 </div>
                                 <div>
                                     <label for="marriage_date" class="block text-sm font-semibold text-gray-800 mb-1.5">Tanggal pernikahan</label>
-                                    <input type="date" id="marriage_date" name="marriage_date" class="text-sm sm:text-base min-h-[44px] sm:min-h-0 w-full max-w-full" value="{{ old('marriage_date') }}">
+                                    <input type="text" id="marriage_date" name="marriage_date" class="js-datepicker text-sm sm:text-base min-h-[44px] sm:min-h-0 w-full max-w-full" value="{{ old('marriage_date') }}" placeholder="YYYY-MM-DD" autocomplete="off">
                                 </div>
                             </div>
                         @elseif(!auth()->user()->is_super_admin)

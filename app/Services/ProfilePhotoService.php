@@ -33,6 +33,8 @@ class ProfilePhotoService
             return $file->store($directory, 'public');
         }
 
+        $src = $this->normalizeOrientation($src, $realPath, $mime);
+
         $w = imagesx($src);
         $h = imagesy($src);
         if ($w < 1 || $h < 1) {
@@ -116,5 +118,59 @@ class ProfilePhotoService
         }
 
         return false;
+    }
+
+    /**
+     * Normalisasi orientasi berdasarkan EXIF (umum pada foto kamera HP).
+     *
+     * @param  \GdImage|resource  $src
+     * @return \GdImage|resource
+     */
+    protected function normalizeOrientation($src, string $path, string $mime)
+    {
+        $mime = strtolower($mime);
+        if (! (str_contains($mime, 'jpeg') || $mime === 'image/jpg')) {
+            return $src;
+        }
+
+        if (! function_exists('exif_read_data')) {
+            return $src;
+        }
+
+        $exif = @exif_read_data($path);
+        $orientation = (int) ($exif['Orientation'] ?? 1);
+
+        if ($orientation === 1) {
+            return $src;
+        }
+
+        if (function_exists('imageflip')) {
+            if (in_array($orientation, [2, 4, 5, 7], true)) {
+                @imageflip($src, IMG_FLIP_HORIZONTAL);
+            }
+            if (in_array($orientation, [4, 5, 7], true)) {
+                @imageflip($src, IMG_FLIP_VERTICAL);
+            }
+        }
+
+        $angle = match ($orientation) {
+            3 => 180,
+            6, 5 => -90,
+            8, 7 => 90,
+            default => 0,
+        };
+
+        if ($angle === 0) {
+            return $src;
+        }
+
+        $rotated = @imagerotate($src, $angle, 0);
+        if ($rotated === false) {
+            return $src;
+        }
+
+        imagedestroy($src);
+
+        return $rotated;
     }
 }

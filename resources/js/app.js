@@ -1,4 +1,6 @@
 import './bootstrap';
+import flatpickr from 'flatpickr';
+import { Indonesian } from 'flatpickr/dist/l10n/id.js';
 
 function initSidebar() {
     const sidebar = document.getElementById('sidebar');
@@ -51,4 +53,27 @@ function initSidebar() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', initSidebar);
+function initDatePickers() {
+    const pickers = document.querySelectorAll('.js-datepicker');
+    if (pickers.length === 0) {
+        return;
+    }
+
+    flatpickr.localize(Indonesian);
+
+    pickers.forEach((el) => {
+        flatpickr(el, {
+            dateFormat: 'Y-m-d',
+            altInput: true,
+            altFormat: 'j F Y',
+            allowInput: true,
+            disableMobile: true,
+            monthSelectorType: 'dropdown',
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initSidebar();
+    initDatePickers();
+});

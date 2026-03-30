@@ -57,12 +57,12 @@
 
                     <div>
                         <label for="birth_date" class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Lahir</label>
-                        <input type="date" id="birth_date" name="birth_date" class="text-sm sm:text-base" value="{{ old('birth_date', $person->birth_date?->format('Y-m-d')) }}">
+                        <input type="text" id="birth_date" name="birth_date" class="js-datepicker text-sm sm:text-base" value="{{ old('birth_date', $person->birth_date?->format('Y-m-d')) }}" placeholder="YYYY-MM-DD" autocomplete="off">
                     </div>
 
                     <div>
                         <label for="death_date" class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Meninggal</label>
-                        <input type="date" id="death_date" name="death_date" class="text-sm sm:text-base" value="{{ old('death_date', $person->death_date?->format('Y-m-d')) }}">
+                        <input type="text" id="death_date" name="death_date" class="js-datepicker text-sm sm:text-base" value="{{ old('death_date', $person->death_date?->format('Y-m-d')) }}" placeholder="YYYY-MM-DD" autocomplete="off">
                     </div>
                 </div>
             </div>
@@ -185,7 +185,7 @@
                         </div>
                         <div>
                             <label for="marriage_date" class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Pernikahan</label>
-                            <input type="date" name="marriage_date" class="w-full text-sm sm:text-base">
+                            <input type="text" id="marriage_date" name="marriage_date" class="js-datepicker w-full text-sm sm:text-base" placeholder="YYYY-MM-DD" autocomplete="off">
                         </div>
                         <button type="button" class="btn-primary w-full justify-center" onclick="addMarriage()">
                             <i class="fas fa-save mr-2"></i>
